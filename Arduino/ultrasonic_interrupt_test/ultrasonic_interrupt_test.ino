@@ -19,8 +19,8 @@ http://arduino.cc/en/Guide/Libraries
 
 #include <TimerOne.h>                                 // Header file for TimerOne library
 
-#define trigPin 12                                    // Pin 12 trigger output
-#define echoPin 2                                     // Pin 2 Echo input
+#define trigPin 5                                    // Pin 12 trigger output
+#define echoPin 3                                     // Pin 2 Echo input
 #define onBoardLED 13                                 // Pin 13 onboard LED
 #define echo_int 0                                    // Interrupt id for echo pulse
 
@@ -47,7 +47,7 @@ void setup()
   
   Timer1.initialize(TIMER_US);                        // Initialise timer 1
   Timer1.attachInterrupt( timerIsr );                 // Attach interrupt to the timer service routine 
-  attachInterrupt(echo_int, echo_interrupt, CHANGE);  // Attach interrupt to the sensor echo input
+  attachInterrupt(digitalPinToInterrupt(echoPin), echo_interrupt, CHANGE);  // Attach interrupt to the sensor echo input
   Serial.begin (9600);                                // Initialise the serial monitor output
 }
 
