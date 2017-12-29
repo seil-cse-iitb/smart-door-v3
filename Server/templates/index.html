@@ -1,0 +1,64 @@
+<html lang="en" >
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="static/lib/angular-material.min.css">
+	<link rel="stylesheet" href="static/css/main.css">
+</head>
+<body ng-app="SmartDoor" ng-cloak>
+  <!--
+    Your HTML content here
+-->  
+<div ng-include="'static/templates/toolbar.html'"></div>
+
+<md-content layout layout-align="center top" ng-controller="HomeCtrl">
+<md-list flex="80" flex-sm="100"  ng-cloak layout layout-wrap>
+
+  <md-subheader class="md-no-sticky" flex="100">Current occupancy</md-subheader>
+  <md-card ng-repeat="occupant in occupants" flex="20" ng-class="{ 'present': occupant.occupancy_status=='OccupancyEnum.present', 'absent': occupant.occupancy_status=='OccupancyEnum.absent' }">
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">[[occupant.name]]</span>
+            <!-- <span class="md-subhead">Large</span> -->
+          </md-card-title-text>
+          <md-card-title-media>
+            <div class="md-media-lg card-media"></div>
+          </md-card-title-media>
+        </md-card-title>
+<!--         <md-card-actions layout="row" layout-align="end center">
+          <md-button>Action 1</md-button>
+          <md-button>Action 2</md-button>
+        </md-card-actions> -->
+      </md-card>
+
+</md-list>
+</md-content>
+<script src="static/lib/mqttws31.min.js"></script>
+
+
+<!-- Angular Material requires Angular.js Libraries -->
+<script src="static/lib/angular.min.js"></script>
+<script src="static/lib/angular-animate.min.js"></script>
+<script src="static/lib/angular-aria.min.js"></script>
+<script src="static/lib/angular-messages.min.js"></script>
+<script src="static/lib/angular-resource.min.js"></script>
+<script src="static/lib/angular-route.min.js"></script>
+
+<!-- Angular Material Library -->
+<script src="static/lib/angular-material.min.js"></script>
+
+<!-- Your application bootstrap  -->
+<script src="static/js/app.js"></script>
+<script src="static/js/routes.js"></script>
+<script src="static/js/services.js"></script>
+<script src="static/js/controllers.js"></script>
+
+
+</body>
+</html>
+
+<!--
+Copyright 2016 Google Inc. All Rights Reserved. 
+Use of this source code is governed by an MIT-style license that can be in foundin the LICENSE file at https://material.angularjs.org/license.
+-->
+
