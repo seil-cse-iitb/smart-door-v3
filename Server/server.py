@@ -33,12 +33,11 @@ def occupants():
 	occupants = [i.as_dict() for i in occupants]
 	return jsonify(occupants)
 
-@app.route('/api/occupants/update')
+@app.route('/api/occupants/prediction')
 def occupancy_update():
 	occupants = User.query.all()
-	# people = [{'name':"Sapan"},{'name':"Shaunak"},{'name':"Shinjan"}]
-	mqttc.publish("smartdoor/events", str(occupants[0].as_dict()))
-	# list_of_dict = [{i} for i in range(5)]
+	occupants[0].occupancy_status = OccupancyEnum.absent
+	mqttc.publish("smartdoor/events/entry", str(occupants[0].as_dict()))
 	occupants = [i.as_dict() for i in occupants]
 	return jsonify(occupants)
 

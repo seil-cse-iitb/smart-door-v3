@@ -1,4 +1,4 @@
-angular.module('SmartDoor', ['ngMaterial','ngRoute','ngResource'])
+angular.module('SmartDoor', ['ngMaterial','ngRoute','ngResource','ngMQTT'])
 
 .config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
@@ -10,7 +10,9 @@ angular.module('SmartDoor', ['ngMaterial','ngRoute','ngResource'])
 	$interpolateProvider.startSymbol('[[');
 	$interpolateProvider.endSymbol(']]');
 })
-
+.config(['MQTTProvider',function(MQTTProvider){
+	MQTTProvider.setHref('ws://localhost:9001');
+}]);
 
 // .config(function Config($httpProvider, jwtOptionsProvider) {
 // 	jwtOptionsProvider.config({

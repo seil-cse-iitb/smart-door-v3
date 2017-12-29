@@ -1,3 +1,108 @@
 md-card.present{
 	background: #0097a7;
+
+}
+#entry-card,#exit-card{
+  visibility: hidden;
+}
+.blink {
+  animation: blink-animation 1s infinite;
+  -webkit-animation: blink-animation 1s infinite;
+}
+@keyframes blink-animation {
+  from{
+  	background: #0097a7;
+  }
+  to {
+    background: rgb(66,66,66);
+  }
+}
+@-webkit-keyframes blink-animation {
+  from{
+  	background: #0097a7;
+  }
+  to {
+    background: rgb(66,66,66);
+  }
+}
+
+/*Door css*/
+@keyframes entering {
+  0%{
+    transform: translate(-300px,0px);
+    fill-opacity: 0;
+  }
+  50%{
+    transform: translate(0px,0px);
+    fill-opacity: 1;
+  }
+  100% {
+    transform: translate(300px,0px);
+    fill-opacity: 0;
+  }
+}
+@-webkit-keyframes entering {
+  0%{
+    transform: translate(-300px,0px);
+    fill-opacity: 0;
+  }
+  50%{
+    transform: translate(0px,0px);
+    fill-opacity: 1;
+  }
+  100% {
+    transform: translate(300px,0px);
+    fill-opacity: 0;
+  }
+}
+
+@keyframes exiting {
+  0%{
+    transform: translate(300px,0px);
+    fill-opacity: 0;
+  }
+  50%{
+    transform: translate(0px,0px);
+    fill-opacity: 1;
+  }
+  100% {
+    transform: translate(-300px,0px);
+    fill-opacity: 0;
+  }
+}
+@-webkit-keyframes exiting {
+  0%{
+    transform: translate(300px,0px);
+    fill-opacity: 0;
+  }
+  50%{
+    transform: translate(0px,0px);
+    fill-opacity: 1;
+  }
+  100% {
+    transform: translate(-300px,0px);
+    fill-opacity: 0;
+  }
+}
+#arrow-entry{
+  display: none;
+}
+.entering #arrow-entry{
+  display:inherit;
+  animation: entering 1s infinite;
+  -webkit-animation: entering 1s infinite;
+}
+.entering #entry-card{
+  visibility: visible;
+}
+#arrow-exit{
+  display: none;
+}
+.exiting #arrow-exit{
+  display:inherit;
+  animation: exiting 1s infinite;
+  -webkit-animation: exiting 1s infinite;
+}
+.exiting #exit-card{
+  visibility: visible;
 }

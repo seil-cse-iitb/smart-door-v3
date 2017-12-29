@@ -5,34 +5,13 @@
     <link rel="stylesheet" href="static/lib/angular-material.min.css">
 	<link rel="stylesheet" href="static/css/main.css">
 </head>
-<body ng-app="SmartDoor" ng-cloak>
+<body ng-app="SmartDoor" ng-cloak  ng-controller="HomeCtrl">
   <!--
     Your HTML content here
 -->  
 <div ng-include="'static/templates/toolbar.html'"></div>
+<div ng-include="include_url"></div>
 
-<md-content layout layout-align="center top" ng-controller="HomeCtrl">
-<md-list flex="80" flex-sm="100"  ng-cloak layout layout-wrap>
-
-  <md-subheader class="md-no-sticky" flex="100">Current occupancy</md-subheader>
-  <md-card ng-repeat="occupant in occupants" flex="20" ng-class="{ 'present': occupant.occupancy_status=='OccupancyEnum.present', 'absent': occupant.occupancy_status=='OccupancyEnum.absent' }">
-        <md-card-title>
-          <md-card-title-text>
-            <span class="md-headline">[[occupant.name]]</span>
-            <!-- <span class="md-subhead">Large</span> -->
-          </md-card-title-text>
-          <md-card-title-media>
-            <div class="md-media-lg card-media"></div>
-          </md-card-title-media>
-        </md-card-title>
-<!--         <md-card-actions layout="row" layout-align="end center">
-          <md-button>Action 1</md-button>
-          <md-button>Action 2</md-button>
-        </md-card-actions> -->
-      </md-card>
-
-</md-list>
-</md-content>
 <script src="static/lib/mqttws31.min.js"></script>
 
 
@@ -46,7 +25,9 @@
 
 <!-- Angular Material Library -->
 <script src="static/lib/angular-material.min.js"></script>
-
+<!-- Angular MQTT Library -->
+<script src="static/lib/bower_components/angular-mqtt/src/browserMqtt.js"></script>
+<script src="static/lib/bower_components/angular-mqtt/src/angular-MQTT.js"></script>
 <!-- Your application bootstrap  -->
 <script src="static/js/app.js"></script>
 <script src="static/js/routes.js"></script>

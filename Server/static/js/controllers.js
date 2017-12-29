@@ -1,49 +1,60 @@
 var API_ROOT = "/api/"
-
-// Create a client instance
-client = new Paho.MQTT.Client(location.hostname, Number(location.port), "smart-door-v3-js");
-
-// set callback handlers
-client.onConnectionLost = onConnectionLost;
-client.onMessageArrived = onMessageArrived;
-
-// connect the client
-client.connect({onSuccess:onConnect});
-
-
-// called when the client connects
-function onConnect() {
-  // Once a connection has been made, make a subscription and send a message.
-  console.log("onConnect");
-  client.subscribe("World");
-  message = new Paho.MQTT.Message("Hello");
-  message.destinationName = "World";
-  client.send(message);
-}
-
-// called when the client loses its connection
-function onConnectionLost(responseObject) {
-  if (responseObject.errorCode !== 0) {
-    console.log("onConnectionLost:"+responseObject.errorMessage);
-  }
-}
-
-// called when a message arrives
-function onMessageArrived(message) {
-  console.log("onMessageArrived:"+message.payloadString);
-}
+var transitioning_queue=[]
 angular.module('SmartDoor')
 
-.controller('HomeCtrl', function($scope,$http, $window, $location) {
+.controller('HomeCtrl', function($scope,$http, $window, $location, MQTTService) {
     // Auth.loginRequired();
     // $scope.logout = function(){
     //     $window.localStorage.removeItem('satellizer_token');
     //     $location.path('/login');
     // }
+    $scope.include_urls = ['static/templates/occupancy.html','static/templates/door.html']
+    $scope.include_url = $scope.include_urls[0]
     $http.get(API_ROOT+"occupants").then(function(response){
         console.log(response)
         $scope.occupants = response.data
     });
+
+    MQTTService.on('smartdoor/events/entry', function(data){
+        data = data.replace(/'/g,"\"")
+        data = JSON.parse(data)
+        for(i in $scope.occupants){
+          if($scope.occupants[i].id === data.id){
+            $scope.occupants[i].occupancy_status = data.occupancy_status
+            $scope.occupants[i].transitioning=true;
+            transitioning_queue.push($scope.occupants[i])
+            setTimeout(function(){
+              transitioning_queue[0].transitioning=false;
+              transitioning_queue.pop()
+              $scope.$apply()
+            },15000)
+          }
+        }
+        // $scope.$apply()
+        console.log($scope.occupants)
+        console.log(data)
+    });
+
+    MQTTService.on('smartdoor/events/entry/start', function(data){
+      $scope.include_url = $scope.include_urls[1]
+      $scope.event = "entering"
+    });
+
+    MQTTService.on('smartdoor/events/entry/end', function(data){
+      $scope.include_url = $scope.include_urls[0]
+      $scope.event = ""
+    });
+
+    MQTTService.on('smartdoor/events/exit/start', function(data){
+      $scope.include_url = $scope.include_urls[1]
+      $scope.event = "exiting"
+    });
+
+    MQTTService.on('smartdoor/events/exit/end', function(data){
+      $scope.include_url = $scope.include_urls[0]
+      $scope.event = ""
+    });
+
 })
 
 
