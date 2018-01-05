@@ -10,6 +10,7 @@ db = SQLAlchemy(app)
 class OccupancyEnum(enum.Enum):
     absent = 0
     present = 1
+    training = 2
     def __repr__(self):
         return self.value
 
@@ -27,7 +28,7 @@ class User(db.Model):
 
 class Record(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date=db.Column(db.Date,unique=True,nullable=False)
+    date=db.Column(db.Date,nullable=False)
     height=db.Column(db.Float,nullable=False)
     weight=db.Column(db.Float,nullable=False)
     actual_user_id=db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)

@@ -1,9 +1,19 @@
 
-<md-content layout layout-align="center top">
+<md-content layout layout-align="center top" ng-class="{'training_mode':training.status}"> 
 <md-list flex="80" flex-sm="100"  ng-cloak layout layout-wrap>
 
-  <md-subheader class="md-no-sticky" flex="100">Current occupancy</md-subheader>
-  <md-card ng-repeat="occupant in occupants" flex="20" ng-class="{ 'present': occupant.occupancy_status=='OccupancyEnum.present', 'absent': occupant.occupancy_status=='OccupancyEnum.absent', 'blink': occupant.transitioning}">
+  <md-subheader class="md-no-sticky" flex="100">
+    <div layout layout-align="start center">
+      <span>Current occupancy</span>
+    <span flex></span>
+    <md-switch ng-model="training.status" aria-label="Training mode" ng-click="training_toggle()">
+      Training mode
+    </md-switch>
+    <md-button class="md-raised md-primary" ng-show="training.status" ng-click="retrain()">Retrain</md-button>
+    </div>
+    
+  </md-subheader>
+  <md-card ng-repeat="occupant in occupants" flex="20" ng-class="{ 'present': occupant.occupancy_status=='OccupancyEnum.present', 'absent': occupant.occupancy_status=='OccupancyEnum.absent', 'training': occupant.occupancy_status=='OccupancyEnum.training', 'blink': occupant.transitioning}" ng-click="tap(occupant)">
         <md-card-title>
           <md-card-title-text>
             <span class="md-headline">[[occupant.name]]</span>

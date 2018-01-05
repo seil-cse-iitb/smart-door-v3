@@ -1,6 +1,14 @@
 md-card.present{
 	background: #0097a7;
-
+}
+md-card{
+  cursor:pointer;
+}
+.training_mode md-card{
+    background: rgb(66,66,66);
+}
+.training_mode md-card.training{
+    background: rgb(244,67,54)
 }
 #entry-card,#exit-card{
   visibility: hidden;
@@ -14,6 +22,7 @@ md-card.present{
   	background: #0097a7;
   }
   to {
+    background: rgb(66,66,66);
     background: rgb(66,66,66);
   }
 }

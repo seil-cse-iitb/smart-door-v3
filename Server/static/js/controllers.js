@@ -10,14 +10,49 @@ angular.module('SmartDoor')
     // }
     $scope.include_urls = ['static/templates/occupancy.html','static/templates/door.html']
     $scope.include_url = $scope.include_urls[0]
-    $http.get(API_ROOT+"occupants").then(function(response){
-        console.log(response)
-        $scope.occupants = response.data
-    });
+    $scope.training={
+      status:false,
+      occupant:null,
+      previous_status:null
+    }
 
-    MQTTService.on('smartdoor/events/entry', function(data){
+    function reset(){
+      $http.get(API_ROOT+"occupants").then(function(response){
+          console.log(response)
+          $scope.occupants = response.data
+      });
+    }
+    reset();
+    $scope.training_toggle = function(){
+      if($scope.training.status )
+        $http.get(API_ROOT+"training/off").then(function(response){
+            console.log(response)
+        });
+    }
+    $scope.tap = function(occupant){
+      if($scope.training.status){
+        if($scope.training.occupant){
+          // Reset training mode for previous occupant undergoing training
+          $scope.training.occupant.occupancy_status = $scope.training.previous_status
+        }
+        $http.get(API_ROOT+"training/"+occupant.id).then(function(response){
+            console.log(response)
+        });
+        $scope.training.occupant=occupant
+        $scope.training.previous_status = occupant.occupancy_status
+        occupant.occupancy_status = "OccupancyEnum.training"
+      }
+    }
+
+    $scope.retrain = function(){
+      $http.get(API_ROOT+"retrain").then(function(response){
+          alert(response.data)
+      });
+    }
+    MQTTService.on('smartdoor/data/#', function(data){
         data = data.replace(/'/g,"\"")
         data = JSON.parse(data)
+        console.log(data)
         for(i in $scope.occupants){
           if($scope.occupants[i].id === data.id){
             $scope.occupants[i].occupancy_status = data.occupancy_status
@@ -27,12 +62,9 @@ angular.module('SmartDoor')
               transitioning_queue[0].transitioning=false;
               transitioning_queue.pop()
               $scope.$apply()
-            },15000)
+            },2000)
           }
         }
-        // $scope.$apply()
-        console.log($scope.occupants)
-        console.log(data)
     });
 
     MQTTService.on('smartdoor/events/entry/start', function(data){

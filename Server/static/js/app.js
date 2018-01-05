@@ -11,7 +11,7 @@ angular.module('SmartDoor', ['ngMaterial','ngRoute','ngResource','ngMQTT'])
 	$interpolateProvider.endSymbol(']]');
 })
 .config(['MQTTProvider',function(MQTTProvider){
-	MQTTProvider.setHref('ws://localhost:9001');
+	MQTTProvider.setHref('ws://192.168.1.113:9001');
 }]);
 
 // .config(function Config($httpProvider, jwtOptionsProvider) {
