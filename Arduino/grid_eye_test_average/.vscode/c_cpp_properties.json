@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/shaunakm/.arduino15/packages/esp8266/hardware/esp8266/2.3.0/cores/esp8266",
+                "${HOME}/Arduino/libraries/**",
+                "${HOME}/arduino-1.8.5/libraries/**"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": false,
+                "path": [
+                    "/home/shaunakm/.arduino15/packages/esp8266/hardware/esp8266/2.3.0/cores/esp8266",
+                    "${HOME}/Arduino/libraries/**",
+                    "${HOME}/arduino-1.8.5/libraries/**"
+                ]
+            },
+            "intelliSenseMode": "clang-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

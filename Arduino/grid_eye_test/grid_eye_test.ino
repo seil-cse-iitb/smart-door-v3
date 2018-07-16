@@ -384,7 +384,7 @@ void loop()
   // delay(100);
 
   //    Serial.println("----------/--------------------------------------------------");
-  reading1 = S1.readRangeSingleMillimeters();
+  reading1 = S1.readRangeSingleMillimeters();   // Reading
   //    Serial.print("Distance from S1 1 : ");/
   //    Serial.print(reading1);/
   if (S1.timeoutOccurred())
