@@ -145,7 +145,7 @@ void loop() {
   // Serial.println("---------------------------");
   // Serial.println("Total Array");
   // Serial.print("[");
-  // for (int index  = 1; index <= 64; index++) 
+  // for (int index  = 1; index <= 64; index++)
   // {
   //   Serial.print(gridEyeData[index-1]);
   //   if(index != 64) Serial.print(",");
@@ -155,7 +155,7 @@ void loop() {
   // Serial.println();
   // Serial.println("---------------------------");
 
-  // Storing data in the respetive arrays 
+  // Storing data in the respetive arrays
   memcpy(gridEyeRight, pixels, 24);
   memcpy(gridEyeCenter, &(pixels[24]), 16);
   memcpy(gridEyeLeft, &(pixels[40]), 24);
@@ -165,38 +165,39 @@ void loop() {
   // Serial.println(gridEyeRight[1]);
   Serial.println("Right to grid eye");
   Serial.print("[");
-  for(int i=1; i <= 24; i++)
+  for (int i = 1; i <= 24; i++)
   {
-    Serial.print(gridEyeRight[i-1]);
+    Serial.print(gridEyeRight[i - 1]);
     if (i != 24) Serial.print(",");
 
-    rightSum += gridEyeRight[i-1];
+    rightSum += gridEyeRight[i - 1];
   }
   Serial.print("] = ");
   Serial.println(rightSum);
   Serial.println();
 
-  Serial.println("Center to grid eye");
-  Serial.print("[");
-  for(int i=1; i <= 16; i++)
-  {
-    Serial.print(gridEyeCenter[i-1]);
-    if (i != 16) Serial.print(",");
-
-    centerSum += gridEyeCenter[i -1];
-  }
-  Serial.print("] = ");
-  Serial.println(centerSum);
-  Serial.println();
+  //
+  //  Serial.println("Center to grid eye");
+  //  Serial.print("[");
+  //  for(int i=1; i <= 16; i++)
+  //  {
+  //    Serial.print(gridEyeCenter[i-1]);
+  //    if (i != 16) Serial.print(",");
+  //
+  //    centerSum += gridEyeCenter[i -1];
+  //  }
+  //  Serial.print("] = ");
+  //  Serial.println(centerSum);
+  //  Serial.println();
 
   Serial.println("Left to grid eye");
   Serial.print("[");
-  for(int i=1; i <= 24; i++)
+  for (int i = 1; i <= 24; i++)
   {
-    Serial.print(gridEyeLeft[i-1]);
+    Serial.print(gridEyeLeft[i - 1]);
     if (i != 24) Serial.print(",");
 
-    leftSum += gridEyeLeft[i-1];
+    leftSum += gridEyeLeft[i - 1];
   }
   Serial.print("] = ");
   Serial.println(leftSum);
@@ -205,6 +206,6 @@ void loop() {
   rightSum = 0;
   centerSum = 0;
   leftSum = 0;
-  
+
   delay(100);
 }

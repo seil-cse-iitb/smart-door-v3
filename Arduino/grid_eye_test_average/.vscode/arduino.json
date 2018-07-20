@@ -1,6 +1,6 @@
 {
     "board": "esp8266:esp8266:nodemcuv2",
-    "configuration": "CpuFrequency=80,UploadSpeed=115200,FlashSize=4M3M",
+    "configuration": "CpuFrequency=80,FlashSize=4M3M,LwIPVariant=v2mss536,Debug=Disabled,DebugLevel=None____,FlashErase=none,UploadSpeed=115200",
     "sketch": "grid_eye_with_mqtt_using_array_2d_average.ino",
     "port": "/dev/ttyUSB0"
 }
