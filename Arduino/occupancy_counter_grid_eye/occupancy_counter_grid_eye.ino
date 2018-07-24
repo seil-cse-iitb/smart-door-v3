@@ -37,10 +37,13 @@
 
 bool published = false;
 bool recorded = false;
+bool calibrated = false;
 
 int record_count = 0;
-
 int byteIndex = 0;
+
+float finalLeftThreshold = 0.0;
+float finalRightThreshold = 0.0;
 
 byte byteArray[100][64];
 
@@ -53,6 +56,9 @@ byte gridEyeCenter[16] = {0};
 unsigned int leftSum = 0;
 unsigned int centerSum = 0;
 unsigned int rightSum = 0;
+
+unsigned int leftSumArray[50] = {0};
+unsigned int rightSumArray[50] = {0};
 
 //lox variables
 #define DOOR_WIDTH 800
@@ -78,6 +84,85 @@ Fsm fsm(&q0);
 MatchState ms;
 char result;
 char buf[100] = {0};
+
+float grid_eye_calibration_left()
+{
+  Serial.println("Left calibration");
+  for (int j = 0; j < 50; j++)
+  {
+    //    Serial.println("Read start");
+    gridEyeData = grid_eye_read();
+
+    memcpy(gridEyeRight, pixels, 32);
+    memcpy(gridEyeLeft, &(pixels[32]), 32);
+
+    for (int i = 1; i <= 32; i++)
+    {
+      //    Serial.print(gridEyeLeft[i - 1]);
+      //    if (i != 24) Serial.print(",");
+
+      leftSum += gridEyeLeft[i - 1];
+    }
+    //    Serial.print("Left sum: ");
+    //    Serial.println(j);
+    leftSumArray[j] = leftSum;
+    //    Serial.println("Sum stored");
+    unsigned long currentTime = millis();
+    //    while ((millis() - currentTime) < 100);
+    delay(100);
+    leftSum = 0;
+  }
+
+  float leftThreshold = 0.0;
+  long totalSum = 0;
+  for (int i = 0; i < 50; i++)
+  {
+    totalSum += leftSumArray[i];
+  }
+
+  leftThreshold = totalSum / 50;
+
+  Serial.println("Retruning from left");
+  return leftThreshold;
+}
+
+float grid_eye_calibration_right()
+{
+  Serial.println("Right calibration");
+  for (int j = 0; j < 50; j++)
+  {
+    gridEyeData = grid_eye_read();
+
+    memcpy(gridEyeRight, pixels, 32);
+    memcpy(gridEyeLeft, &(pixels[32]), 32);
+
+    for (int i = 1; i <= 32; i++)
+    {
+      //    Serial.print(gridEyeLeft[i - 1]);
+      //    if (i != 24) Serial.print(",");
+
+      rightSum += gridEyeRight[i - 1];
+    }
+    rightSumArray[j] = rightSum;
+
+    double currentTime = millis();
+    //    while((millis() - currentTime) < 100);
+    delay(100);
+    rightSum = 0;
+  }
+
+  float rightThreshold = 0.0;
+  long totalSum = 0;
+  for (int i = 0; i < 50; i++)
+  {
+    totalSum += rightSumArray[i];
+  }
+  rightThreshold = totalSum / 50;
+
+  Serial.println("Return from right");
+  return rightThreshold;
+}
+
 
 void grid_eye_publish()
 {
@@ -112,18 +197,25 @@ void on_q0_enter() {
   ms.Target (buf);
   //Test for entry
   result = ms.Match ("0.*1.*3.*2.*", 0);
+  String mqtt_string;
   if (result == REGEXP_MATCHED) {
     Serial.println("ENTRY");
+    mqtt_string = "entry: ";
     occupancy_counter++;
   }
   //Test for exit
   result = ms.Match ("0.*2.*3.*1.*", 0);
   if (result == REGEXP_MATCHED && occupancy_counter > 0) {
     Serial.println("EXIT");
+    mqtt_string = "exit: ";
     occupancy_counter--;
   }
   Serial.print("Occupancy counter:");
   Serial.println(occupancy_counter);
+  mqtt_string += String(occupancy_counter);
+  char mqtt_char[10];
+  mqtt_string.toCharArray(mqtt_char, 10);
+  client.publish(mqtt_topic, mqtt_char);
   transition_string = "0";
 }
 void on_q1_enter() {
@@ -231,6 +323,20 @@ void loop() {
   if (!client.connected()) reconnect();
   client.loop();
 
+  // Calibrating the sensor
+  if (!calibrated)
+  {
+    Serial.println("Calibrating..!!");
+    finalLeftThreshold = grid_eye_calibration_left() + 150;
+    finalRightThreshold = grid_eye_calibration_right() + 150;
+    Serial.print("Left Threshold: ");
+    Serial.println(finalLeftThreshold);
+    Serial.print("Right Threshold: ");
+    Serial.println(finalRightThreshold);
+
+    calibrated = true;
+  }
+
   // Reading grid eye grid eye data
   gridEyeData = grid_eye_read();
 
@@ -248,6 +354,7 @@ void loop() {
     rightSum += gridEyeRight[i - 1];
   }
   //  Serial.print("] = ");
+  //  Serial.print("Right sum : ");
   //  Serial.println(rightSum);
   //  Serial.println();
 
@@ -261,16 +368,19 @@ void loop() {
     leftSum += gridEyeLeft[i - 1];
   }
   //  Serial.print("] = ");
+  //  Serial.print("Left sum : ");
   //  Serial.println(leftSum);
   //  Serial.println();
   if (rightSum < 2000 || leftSum < 2000) {
     Serial.println("Error: please restart!!");
+    delay(2000);
+    //    ESP.reset();
   }
 
   //  if (rightSum > 3600 && leftSum > 3600) Serial.println("U1 and U2 triggered");
   //  else
   {
-    if (rightSum > 3600)
+    if (rightSum > finalRightThreshold)
     {
       Serial.println("U2 triggered");
       fsm.trigger(U2_TRIGGERED);
@@ -282,7 +392,7 @@ void loop() {
       fsm.trigger(U2_HALTED);
     }
 
-    if (leftSum > 3600)
+    if (leftSum > finalLeftThreshold)
     {
       Serial.println("U1 triggered");
       fsm.trigger(U1_TRIGGERED);
