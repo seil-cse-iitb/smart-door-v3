@@ -94,9 +94,9 @@ float grid_eye_calibration_left()
     gridEyeData = grid_eye_read();
 
     memcpy(gridEyeRight, pixels, 32);
-    memcpy(gridEyeLeft, &(pixels[32]), 32);
+    memcpy(gridEyeLeft, &(pixels[32]), 24);
 
-    for (int i = 1; i <= 32; i++)
+    for (int i = 1; i <= 24; i++)
     {
       //    Serial.print(gridEyeLeft[i - 1]);
       //    if (i != 24) Serial.print(",");
@@ -255,56 +255,6 @@ void setup() {
 
   delay(100); // let grid eye sensor boot up
 
-  /*
-    pinMode(S1_XSHUT, OUTPUT);
-    digitalWrite(S1_XSHUT, LOW);
-
-    delay(10);
-
-    pinMode(S2_XSHUT, OUTPUT);
-    digitalWrite(S2_XSHUT, LOW);
-
-    Wire.begin();
-
-    digitalWrite(S1_XSHUT, HIGH);
-    delay(10);
-    S1.init();
-    S1.setTimeout(200);
-    S1.setAddress((uint8_t)48);
-    delay(10);
-
-    #if defined LONG_RANGE
-    // lower the return signal rate limit (default is 0.25 MCPS)
-    S1.setSignalRateLimit(0.1);
-    // increase laser pulse periods (defaults are 14 and 10 PCLKs)
-    S1.setVcselPulsePeriod(VL53L0X::VcselPeriodPreRange, 18);
-    S1.setVcselPulsePeriod(VL53L0X::VcselPeriodFinalRange, 14);
-    #endif
-
-    #if defined HIGH_SPEED
-    // reduce timing budget to 20 ms (default is about 33 ms)
-    S1.setMeasurementTimingBudget(20000);
-    #elif defined HIGH_ACCURACY
-    // increase timing budget to 200 ms
-    S1.setMeasurementTimingBudget(200000);
-    #endif
-
-    digitalWrite(S2_XSHUT, HIGH);
-    delay(10);
-    S2.init();
-    S2.setTimeout(200);
-    S2.setAddress((uint8_t)49);
-    delay(10);
-
-    #if defined HIGH_SPEED
-    // reduce timing budget to 20 ms (default is about 33 ms)
-    S2.setMeasurementTimingBudget(20000);
-    #elif defined HIGH_ACCURACY
-    // increase timing budget to 200 ms
-    S2.setMeasurementTimingBudget(200000);
-    #endif
-  */
-  // power
   Serial.println(F("SEIL occupancy counter using VL53lox rangefinder\n\n"));
   fsm.add_transition(&q0, &q1, U1_TRIGGERED, NULL);
   fsm.add_transition(&q1, &q3, U2_TRIGGERED, NULL);
@@ -327,7 +277,7 @@ void loop() {
   if (!calibrated)
   {
     Serial.println("Calibrating..!!");
-    finalLeftThreshold = grid_eye_calibration_left() + 150;
+    finalLeftThreshold = grid_eye_calibration_left() + 180;
     finalRightThreshold = grid_eye_calibration_right() + 150;
     Serial.print("Left Threshold: ");
     Serial.println(finalLeftThreshold);
@@ -342,7 +292,8 @@ void loop() {
 
   memcpy(gridEyeRight, pixels, 32);
   //  memcpy(gridEyeCenter, &(pixels[24]), 16);
-  memcpy(gridEyeLeft, &(pixels[32]), 32);
+  //  memcpy(gridEyeLeft, &(pixels[32]), 32);
+  memcpy(gridEyeLeft, &(pixels[32]), 24);
 
   //  Serial.print("Sum for right = [");
   //  rightSum = calculate_sum(gridEyeRight);
@@ -360,7 +311,7 @@ void loop() {
 
   //  Serial.print("Sum for left = [");
   //  leftSum = calculate_sum(gridEyeLeft);
-  for (int i = 1; i <= 32; i++)
+  for (int i = 1; i <= 24; i++)
   {
     //    Serial.print(gridEyeLeft[i - 1]);
     //    if (i != 24) Serial.print(",");
@@ -371,7 +322,7 @@ void loop() {
   //  Serial.print("Left sum : ");
   //  Serial.println(leftSum);
   //  Serial.println();
-  if (rightSum < 2000 || leftSum < 2000) {
+  if (rightSum < 2000 || leftSum < 1500) {
     Serial.println("Error: please restart!!");
     delay(2000);
     //    ESP.reset();
