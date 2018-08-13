@@ -32,10 +32,14 @@ training ={'status':False,'id':None}
 def index():
     return render_template('index.html', name="Smart Door v3")
 
+@app.route('/test-ws')
+def test_ws():
+    return render_template('test-ws.html', name="Test WS")
+
 @app.route('/api/occupants/')
 def occupants():
 	occupants = User.query.all()
-	people = [{'name':"Sapan"},{'name':"Shaunak"},{'name':"Shinjan"}]
+	# people = [{'name':"Sapan"},{'name':"Shaunak"},{'name':"Shinjan"}, {'name':"Bhushan"}]
 	# list_of_dict = [{i} for i in range(5)]
 	occupants = [i.as_dict() for i in occupants]
 	return jsonify(occupants)
@@ -52,6 +56,16 @@ def training_on(id):
 	training['status'] = True
 	training['id'] = id
 	return "Training mode ON"
+
+@app.route('/api/tag/<id>')
+def tag(id):
+	occupant = User.query.get(int(id))
+	if occupant.occupancy_status == OccupancyEnum.absent:
+		occupant.occupancy_status = OccupancyEnum.present
+	else:
+		occupant.occupancy_status = OccupancyEnum.absent
+	db.session.commit()
+	return jsonify(occupant.as_dict())
 
 @app.route('/api/retrain')
 def retrain():
@@ -76,12 +90,11 @@ def prediction(height,weight,steps,direction):
 			occupant.occupancy_status = OccupancyEnum.present
 		else:
 			occupant.occupancy_status = OccupancyEnum.absent
-
-		db.session.add(Record(date=datetime.datetime.now(),height=height,weight=weight,predicted_user_id=predicted_id,steps=steps,direction=direction))
+		record = Record(date=datetime.datetime.now(),height=height,weight=weight,predicted_user_id=predicted_id,steps=steps,direction=direction)
+		print(str(record.as_dict()))
+		mqttc.publish("smartdoor/data/"+direction, str((record.as_dict())))
+		db.session.add(record)
 		db.session.commit()
-
-		mqttc.publish("smartdoor/data/"+direction, str((occupant.as_dict())))
-
 		return "predicted" + str(occupant)
 
 
@@ -89,3 +102,26 @@ def prediction(height,weight,steps,direction):
 def events(direction,action):
 	mqttc.publish("smartdoor/events/"+direction+"/"+action)
 	return "published"
+
+#
+# @app.route('/atmos/prediction/<height>/<weight>/<steps>/<direction>')
+# def prediction_atmos(height,weight,steps,direction):
+# 	# print(training)
+# 	if training['status']: #training mode
+# 		pd.DataFrame([[training['id'],height,weight,steps]]).to_csv('./data/train_data.csv',mode='a',header = False,index = False)
+# 		return "added to training data"
+# 	else: # prediction mode
+# 		record = [float(height),float(weight),int(steps)]
+# 		predicted_id = predict(record)
+# 		occupant = User.query.get(int(predicted_id))
+# 		if direction == 'entry':
+# 			occupant.occupancy_status = OccupancyEnum.present
+# 		else:
+# 			occupant.occupancy_status = OccupancyEnum.absent
+# 		record = Record(date=datetime.datetime.now(),height=height,weight=weight,predicted_user_id=predicted_id,steps=steps,direction=direction)
+# 		print(str(record.as_dict()))
+# 		mqttc.publish("smartdoor/data/"+direction, str((record.as_dict())))
+# 		db.session.add(record)
+# 		db.session.commit()
+# 		return "predicted" + str(occupant)
+#

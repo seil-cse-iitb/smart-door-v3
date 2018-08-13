@@ -1,33 +1,49 @@
+<md-content layout layout-align="center top" layout-wrap ng-class="{'training_mode':training.status}">
+  <md-list flex="100" flex-gt-sm="80" ng-cloak layout layout-wrap>
 
-<md-content layout layout-align="center top" ng-class="{'training_mode':training.status}"> 
-<md-list flex="80" flex-sm="100"  ng-cloak layout layout-wrap>
+    <md-subheader class="md-no-sticky" flex="100">
+      <div layout layout-align="start center">
+        <span>Current occupancy</span>
+        <span flex></span>
+        <md-switch ng-model="training.status" aria-label="Training mode" ng-click="training_toggle()">
+          Training mode
+        </md-switch>
+        <md-button class="md-raised md-primary" ng-show="training.status" ng-click="retrain()">Retrain</md-button>
+      </div>
 
-  <md-subheader class="md-no-sticky" flex="100">
-    <div layout layout-align="start center">
-      <span>Current occupancy</span>
-    <span flex></span>
-    <md-switch ng-model="training.status" aria-label="Training mode" ng-click="training_toggle()">
-      Training mode
-    </md-switch>
-    <md-button class="md-raised md-primary" ng-show="training.status" ng-click="retrain()">Retrain</md-button>
-    </div>
-    
-  </md-subheader>
-  <md-card ng-repeat="occupant in occupants" flex="20" ng-class="{ 'present': occupant.occupancy_status=='OccupancyEnum.present', 'absent': occupant.occupancy_status=='OccupancyEnum.absent', 'training': occupant.occupancy_status=='OccupancyEnum.training', 'blink': occupant.transitioning}" ng-click="tap(occupant)">
+    </md-subheader>
+    <div ng-repeat="occupant in occupants" flex="50" flex-gt-sm="20">
+      <md-card class="occupant" ng-class="{ 'present': occupant.occupancy_status=='OccupancyEnum.present', 'absent': occupant.occupancy_status=='OccupancyEnum.absent', 'training': occupant.occupancy_status=='OccupancyEnum.training', 'blink': occupant.transitioning}"
+        ng-click="tap(occupant)">
         <md-card-title>
           <md-card-title-text>
             <span class="md-headline">[[occupant.name]]</span>
-            <!-- <span class="md-subhead">Large</span> -->
           </md-card-title-text>
-          <md-card-title-media>
+          <!-- <md-card-title-media>
             <div class="md-media-lg card-media"></div>
-          </md-card-title-media>
+          </md-card-title-media> -->
         </md-card-title>
-<!--         <md-card-actions layout="row" layout-align="end center">
-          <md-button>Action 1</md-button>
-          <md-button>Action 2</md-button>
-        </md-card-actions> -->
       </md-card>
+    </div>
+  </md-list>
+  <section flex="100" flex-gt-sm="80" ng-cloak layout layout-wrap>
+    <md-subheader class="md-no-sticky" flex="100">
+      Prediction History
+    </md-subheader>
+    <div ng-repeat="record in records|limitTo:-10| orderBy:'-'" flex="50" flex-gt-sm="20">
+    <md-card >
+      <md-card-title>
+        <md-card-title-text>
+          <span class="md-headline">[[findById(occupants, record.predicted_user_id).name]]</span>
+          <p>Height: [[record.height]] <br>
+          Weight: [[record.weight]]<br>
+          Steps: [[record.steps]]<br>
+          Direction: [[record.direction]]</p>
+          <small>Time: [[record.date]]</small>
 
-</md-list>
+        </md-card-title-text>
+      </md-card-title>
+    </md-card>
+    </div>
+  </section>
 </md-content>

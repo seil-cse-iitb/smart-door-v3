@@ -1,0 +1,20 @@
+{
+  "name": "smart-door-v3",
+  "version": "1.0.0",
+  "description": "Smart Door v3 angularjs dependencies",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shinjan Mitra",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.5.5",
+    "ngmqtt": "^1.0.2",
+    "angular-animate": "1.5.5",
+    "angular-aria": "1.5.5",
+    "angular-material": "1.1.0",
+    "angular-messages": "1.5.5",
+    "angular-resource": "1.5.5",
+    "angular-route": "1.5.5"
+  }
+}

@@ -40,3 +40,5 @@ class Record(db.Model):
     predicted_user = relationship("User", foreign_keys=[predicted_user_id])
     def __repr__(self):
         return '<Record %r,%r>' % (self.predicted_user.name,self.data)
+    def as_dict(self):
+        return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}

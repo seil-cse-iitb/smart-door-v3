@@ -1,2 +1,7 @@
 *.pyc
 .idea
+nohup.out
+node_modules/
+.vscode
+Untitled.ipynb
+Untitled-checkpoint.ipynb
