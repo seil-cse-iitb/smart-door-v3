@@ -1,5 +1,5 @@
 import pandas as pd
-from pip._vendor import requests
+import requests
 from sklearn import preprocessing
 from sklearn.ensemble import RandomForestClassifier
 from models import *

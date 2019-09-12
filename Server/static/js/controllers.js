@@ -70,7 +70,7 @@ angular.module('SmartDoor')
       protocolId: 'MQTT',
       protocolVersion: 4
     };
-    ngmqtt.connect('ws://10.129.149.33:1884', options);
+    ngmqtt.connect('ws://localhost:1884', options);
 
     ngmqtt.listenConnection("HomeCtrl", function () {
       console.log("connected");
