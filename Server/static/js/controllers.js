@@ -93,7 +93,15 @@ angular.module('SmartDoor')
               
               $scope.occupants[i].occupancy_status = record.direction == 'entry' ? "OccupancyEnum.present" : "OccupancyEnum.absent"
               $scope.occupants[i].transitioning = true;
-              transitioning_queue.push($scope.occupants[i])
+              transitioning_queue.push($scope.occupants[i]);
+              var text = (record.direction == 'entry' ? "Welcome to the lab, " : "Goodbye, ")+$scope.occupants[i].name;
+              var msg = new SpeechSynthesisUtterance();
+              var voices = window.speechSynthesis.getVoices();
+              msg.voice = voices[2];
+              msg.rate = 1;
+              msg.pitch = 1;
+              msg.text = text;        
+              speechSynthesis.speak(msg);
               $scope.$apply();
               setTimeout(function () {
                 transitioning_queue[0].transitioning = false;
